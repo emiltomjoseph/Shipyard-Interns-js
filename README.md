@@ -1,5 +1,5 @@
 # Secura
-Secura is a secure project management system built using **Next.js**, **Express.js**, and **SQLite**. It demonstrates **JWT-based authentication** and **role-based authorization**.
+Secura is a secure project management system built using **Next.js**, **Express.js**, and **SQLite**. It demonstrates **JWT-based authentication**, **role-based authorization**, and **owner-based access control** for managing projects securely.
 
 ## Features
 
@@ -57,6 +57,15 @@ http://localhost:5000
 }
 ```
 
+### Lead
+
+```json
+{
+  "email": "lead@example.com",
+  "password": "123456"
+}
+```
+
 ### Developer
 
 ```json
@@ -64,6 +73,23 @@ http://localhost:5000
   "email": "dev@example.com",
   "password": "123456"
 }
+```
+
+## Project Structure
+
+```text
+Shipyard-Interns-js
+│
+├── backend
+│   ├── src
+│   └── package.json
+│
+├── frontend
+│   ├── src
+│   └── package.json
+│
+├── README.md
+└── documentation.md
 ```
 
 ## Author
