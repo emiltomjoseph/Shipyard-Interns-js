@@ -1,241 +1,191 @@
 # Secura - Technical Documentation
 
-## Introduction
-Secura is a secure project management system developed to demonstrate JWT-based authentication and role-based authorization using Express.js and SQLite.
+## Overview
 
-The application allows users to securely access protected resources while enforcing ownership and role-based access control.
+Secura is a secure project management system built using **Express.js**, **SQLite**, **JWT**, and **bcrypt**. The application demonstrates secure authentication and authorization by allowing users to register, log in, and manage projects while enforcing role-based and owner-based access control.
 
 ---
 
-# System Architecture
+## Tech Stack
+
+| Component         | Technology |
+| ----------------- | ---------- |
+| Frontend          | Next.js    |
+| Backend           | Express.js |
+| Database          | SQLite     |
+| Authentication    | JWT        |
+| Password Security | bcryptjs   |
+
+---
+
+## Core Features
+
+### Authentication
+
+* User Registration
+* User Login
+* Password Hashing
+* JWT Token Generation
+* Protected Routes
+* Token Expiry Handling
+
+### Authorization
+
+* Role-Based Access Control
+* Owner-Based Access Control
+* Admin Privileges
+
+### Project Management
+
+* Create Projects
+* View Projects
+* Update Projects
+* Delete Projects
+
+---
+
+## System Flow
+
 ```text
-Client
-   │
-   ▼
-Express API
-   │
-   ▼
-Authentication Middleware
-   │
-   ▼
-Authorization Middleware
-   │
-   ▼
-SQLite Database
+User
+  │
+  ▼
+Register / Login
+  │
+  ▼
+JWT Token Generated
+  │
+  ▼
+Protected Routes
+  │
+  ▼
+Authentication Check
+  │
+  ▼
+Authorization Check
+  │
+  ▼
+Database Access
 ```
 
 ---
 
-# Authentication Flow
-## User Registration
+## Authentication
+
+Authentication verifies the identity of a user before granting access to protected resources.
+
+### Registration Process
+
 1. User submits registration details.
 2. Password is hashed using bcrypt.
-3. User data is stored in SQLite database.
-4. Registration response is returned.
-
-### Stored User Data
-```text
-id
-name
-email
-password (hashed)
-role
-```
-
----
-
-## User Login
-
-1. User submits email and password.
-2. System retrieves user from database.
-3. bcrypt compares entered password with stored hash.
-4. JWT token is generated.
-5. Token is returned to the user.
-
-### Example JWT Payload
-
-```json
-{
-  "id": 1,
-  "role": "admin"
-}
-```
-
----
-
-# JWT Authentication
-
-JWT (JSON Web Token) is used to authenticate users.
+3. User data is stored in the database.
+4. Registration confirmation is returned.
 
 ### Login Process
 
-```text
-User Login
-    ↓
-Credential Verification
-    ↓
-JWT Generation
-    ↓
-Token Sent To Client
-```
+1. User submits email and password.
+2. Credentials are validated.
+3. JWT token is generated.
+4. Token is returned to the client.
 
-### Protected Request
+### JWT Authentication
 
-```text
-Client Request
-    ↓
-Authorization Header
-    ↓
-JWT Verification
-    ↓
-Access Granted
-```
-
-### Authorization Header Format
+Protected routes require a valid JWT token.
 
 ```http
 Authorization: Bearer <token>
 ```
 
-### Token Expiry
-
-Tokens are configured to expire after one hour.
-
-```javascript
-expiresIn: "1h"
-```
+The token contains user information and expires after **1 hour**.
 
 ---
 
-# Authorization Flow
+## Authorization
 
-Authorization determines what actions a user can perform after successful authentication.
+Authorization determines what actions a user can perform after authentication.
 
-## Roles
+### Roles
 
-### Developer (dev)
-
-* View Projects
-* Create Projects
-* Modify Own Projects
-
-### Lead (lead)
-
-* View Projects
-* Create Projects
-* Modify Own Projects
-
-### Administrator (admin)
-
-* Full Access
-* Modify Any Project
-* Delete Any Project
+| Role  | Permissions                           |
+| ----- | ------------------------------------- |
+| dev   | Create, view, and manage own projects |
+| lead  | Create, view, and manage own projects |
+| admin | Full access to all projects           |
 
 ---
 
-# Owner-Based Authorization
+## Owner-Based Access Control
 
-Each project contains an ownerId field.
+Each project is linked to its creator through an `ownerId`.
 
-```text
-Project
-   │
-   └── ownerId
-```
+A project can be modified only by:
 
-Only:
+* The project owner
+* An administrator
 
-* Project Owner
-* Administrator
-
-can update or delete the project.
+Any other user attempting to update or delete the project will receive an **Access Denied** response.
 
 ---
 
-# Database Schema
+## Middleware
 
-## Users Table
+### Authentication Middleware
 
-| Column   | Type    |
-| -------- | ------- |
-| id       | INTEGER |
-| name     | TEXT    |
-| email    | TEXT    |
-| password | TEXT    |
-| role     | TEXT    |
-
----
-
-## Projects Table
-
-| Column      | Type    |
-| ----------- | ------- |
-| id          | INTEGER |
-| name        | TEXT    |
-| description | TEXT    |
-| status      | TEXT    |
-| ownerId     | INTEGER |
-
----
-
-# Middleware
-
-## Authentication Middleware
-
-File:
-
-```text
-authMiddleware.js
-```
+**File:** `authMiddleware.js`
 
 Responsibilities:
 
 * Extract JWT token
-* Verify JWT signature
+* Verify token validity
 * Decode user information
-* Attach user data to request
+* Allow or deny access
 
----
+### Authorization Middleware
 
-## Authorization Middleware
-
-File:
-
-```text
-authorizationMiddleware.js
-```
+**File:** `authorizationMiddleware.js`
 
 Responsibilities:
 
 * Verify project ownership
-* Verify administrator access
+* Verify administrator privileges
 * Prevent unauthorized modifications
 
 ---
 
-# Security Measures
+## Database Design
 
-The application implements several security mechanisms:
+### Users Table
 
-* Password Hashing using bcrypt
-* JWT Authentication
-* Protected Routes
-* Role-Based Authorization
-* Owner-Based Authorization
-* Token Expiry Handling
+| Field    | Description            |
+| -------- | ---------------------- |
+| id       | Unique user identifier |
+| name     | User name              |
+| email    | User email             |
+| password | Hashed password        |
+| role     | User role              |
+
+### Projects Table
+
+| Field       | Description               |
+| ----------- | ------------------------- |
+| id          | Unique project identifier |
+| name        | Project name              |
+| description | Project description       |
+| status      | Project status            |
+| ownerId     | Project owner             |
 
 ---
 
-# API Summary
+## API Endpoints
 
-## Authentication
+### Authentication
 
 ```http
 POST /api/auth/register
 POST /api/auth/login
 ```
 
-## Projects
+### Projects
 
 ```http
 GET    /api/projects
@@ -246,6 +196,36 @@ DELETE /api/projects/:id
 
 ---
 
-# Conclusion
+## Security Measures
 
-Secura successfully demonstrates secure authentication and authorization using Express.js, SQLite, JWT, and bcrypt. The system implements role-based and owner-based access control to ensure that resources are only accessible by authorized users.
+* Password Hashing using bcrypt
+* JWT Authentication
+* Protected Routes
+* Role-Based Authorization
+* Owner-Based Access Control
+* Token Expiry Handling
+
+---
+
+## Project Structure
+
+```text
+backend/
+│
+├── src/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── routes/
+│   └── app.js
+│
+├── database.sqlite
+├── package.json
+└── .env
+```
+
+---
+
+## Conclusion
+
+Secura demonstrates a secure authentication and authorization system using modern backend development practices. By combining JWT authentication, password hashing, role-based authorization, and owner-based access control, the application ensures that resources remain accessible only to authorized users.
