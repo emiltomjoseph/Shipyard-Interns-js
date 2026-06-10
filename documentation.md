@@ -210,18 +210,26 @@ DELETE /api/projects/:id
 ## Project Structure
 
 ```text
-backend/
+Shipyard-Interns-js
 │
-├── src/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── routes/
-│   └── app.js
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   └── app.js
+│   │
+│   ├── package.json
+│   └── .env.example
 │
-├── database.sqlite
-├── package.json
-└── .env
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── README.md
+└── documentation.md
 ```
 
 ---
