@@ -32,6 +32,20 @@ Secura is a secure project management system built using **Next.js**, **Express.
 
 ## Run the Project
 
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on:
+
+```text
+http://localhost:3000
+```
+
 ### Backend
 
 ```bash
