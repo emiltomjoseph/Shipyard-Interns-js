@@ -150,16 +150,6 @@ Only:
 
 can update or delete the project.
 
-### Example
-
-```text
-Project Owner = User 1
-Current User = User 2
-
-Result:
-Access Denied
-```
-
 ---
 
 # Database Schema
